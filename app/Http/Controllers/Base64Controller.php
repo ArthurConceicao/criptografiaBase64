@@ -9,61 +9,47 @@
 namespace App\Http\Controllers;
 
 
-use http\Env\Request;
-
 class Base64Controller extends Controller
 {
     public function index(){
         $textoCriptografado = '';
-        return view('/', compact('textoCriptografado'));
+        return view('/welcome', compact('textoCriptografado'));
     }
 
-    public function criptografar(Request $request){
+    public function criptografar(\Illuminate\Http\Request $request){
         $texto = $request['texto_original'];
 
-        $texto = asciiToHex($texto);
-        $texto = hexToBin($texto);
-        $texto = break6by6($texto);
-        $texto = binToDec($texto);
-        $textoCriptografado = decToASCII($texto);
-
-        return view('/', compact('textoCriptografado'));
+        $textoASCII = iconv("UTF-8", "CP437", $texto);
+        $textoHex = $this->asciiToHex($textoASCII);
+        $textoBin = $this->hexToBin($textoHex);
+        $texto6by6 = $this->break6by6($textoBin);
+        $textoDec = $this->binToDec($texto6by6);
+        $textoCriptografado = $this->decToASCII($textoDec, $textoBin);
+dd($textoASCII, $textoHex, $textoBin, $texto6by6, $textoDec, $textoCriptografado);
+        return view('/welcome', compact('textoCriptografado'));
     }
 
-    private function asciiToHex(string $texto, &$offset) {
-        $arrayDeCaracteres = str_split($texto);
-        foreach($arrayDeCaracteres as $chave => $caractere){
-            $code = ord(substr($caractere, $offset,1));
-            if ($code >= 128) {        //otherwise 0xxxxxxx
-                if ($code < 224) $bytesnumber = 2;                //110xxxxx
-                else if ($code < 240) $bytesnumber = 3;        //1110xxxx
-                else if ($code < 248) $bytesnumber = 4;    //11110xxx
-                $codetemp = $code - 192 - ($bytesnumber > 2 ? 32 : 0) - ($bytesnumber > 3 ? 16 : 0);
-                for ($i = 2; $i <= $bytesnumber; $i++) {
-                    $offset ++;
-                    $code2 = ord(substr($caractere, $offset, 1)) - 128;        //10xxxxxx
-                    $codetemp = $codetemp*64 + $code2;
-                }
-                $code = $codetemp;
-            }
-            $offset += 1;
-            if ($offset >= strlen($caractere)) $offset = -1;
-            $arrayDeHex[key] = $caractere;
+    private function asciiToHex(string $ascii) {
+        $arrayASCII = str_split($ascii);;
+        foreach ($arrayASCII as $key => $value) {
+            $byte = strtoupper(dechex(ord($ascii{$key})));
+            $byte = str_repeat('0', 2 - strlen($byte)).$byte;
+            $arrayDeHex[$key] = $byte;
         }
-
         return $arrayDeHex;
     }
 
     private function hexToBin($arrayDeHex){
-        foreach($arrayDeHex as $key => $itemHex){
-            $arrayDeBin[$key] = base_convert($itemHex, 16, 2);
+        foreach($arrayDeHex as $key => $itemHex) {
+            $arrayDeBin[$key] = sprintf("%08d", base_convert($itemHex, 16, 2));
         }
-        return $arrayDeHex;
+
+        return $arrayDeBin;
     }
 
-    private function break6by6($array){
+    private function break6by6($arrayDeBin){
         $textoBin = '';
-        foreach($array as $caractere){
+        foreach($arrayDeBin as $caractere){
             $textoBin .= $caractere;
         }
 
@@ -71,19 +57,33 @@ class Base64Controller extends Controller
     }
 
     private function binToDec($sequenciasDe6){
-        foreach ($sequenciasDe6 as $sequenciaDe6){
-            $arrayDeDec = base_convert($sequenciaDe6, 16, 2);
+        foreach ($sequenciasDe6 as $key => $sequenciaDe6){
+            $arrayDeDec[$key] = base_convert($sequenciaDe6, 2, 10);
         }
 
         return $arrayDeDec;
     }
 
-    private function decToASCII($arrayDeDec){
+    private function decToASCII($arrayDeDec, $arrayDeBin){
         foreach($arrayDeDec as $key => $itemDec){
-            $arrayDeASCII[$key] = chr($itemDec);
+            $arrayDeASCII[$key] = chr(intval(7));
         }
-        while(count($arrayDeDec) % 3 != 0){
-            array_push($arrayDeASCII[count($arrayDeASCII)], '=');
+        for($i = 0; $i <= 150; $i++){
+            print_r(chr($i));
+        }die;
+        $padding = "=";
+        $textBin = "";
+        foreach($arrayDeBin as $bin){
+            $textBin .= $bin;
+        }
+
+        switch(strlen($textBin) % 3){
+            case 1:
+                array_push($arrayDeASCII, $padding . $padding );
+                break;
+            case 2:
+                array_push($arrayDeASCII, $padding);
+                break;
         }
         return $arrayDeASCII;
     }

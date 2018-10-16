@@ -11,8 +11,6 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', 'Base64Controller@index');
 
-Route::post('/', 'Base64Controller@criptografar')->name('criptografar.base64');
+Route::post('/base64', 'Base64Controller@criptografar')->name('criptografar.base64');
