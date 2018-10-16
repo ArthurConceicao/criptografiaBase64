@@ -8,6 +8,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Constants\BASE64;
 
 class Base64Controller extends Controller
 {
@@ -19,20 +20,19 @@ class Base64Controller extends Controller
     public function criptografar(\Illuminate\Http\Request $request){
         $texto = $request['texto_original'];
 
-        $textoASCII = iconv("UTF-8", "CP437", $texto);
-        $textoHex = $this->asciiToHex($textoASCII);
+        $textoHex = $this->asciiToHex($texto);
         $textoBin = $this->hexToBin($textoHex);
         $texto6by6 = $this->break6by6($textoBin);
         $textoDec = $this->binToDec($texto6by6);
-        $textoCriptografado = $this->decToASCII($textoDec, $textoBin);
-dd($textoASCII, $textoHex, $textoBin, $texto6by6, $textoDec, $textoCriptografado);
+        $textoCriptografado = $this->decToBase64Alphabet($textoDec);
+dd($texto, $textoHex, $textoBin, $texto6by6, $textoDec, $textoCriptografado);
         return view('/welcome', compact('textoCriptografado'));
     }
 
-    private function asciiToHex(string $ascii) {
-        $arrayASCII = str_split($ascii);;
+    private function asciiToHex(string $texto) {
+        $arrayASCII = str_split($texto);;
         foreach ($arrayASCII as $key => $value) {
-            $byte = strtoupper(dechex(ord($ascii{$key})));
+            $byte = strtoupper(dechex(ord($value)));
             $byte = str_repeat('0', 2 - strlen($byte)).$byte;
             $arrayDeHex[$key] = $byte;
         }
@@ -53,7 +53,13 @@ dd($textoASCII, $textoHex, $textoBin, $texto6by6, $textoDec, $textoCriptografado
             $textoBin .= $caractere;
         }
 
-        return str_split($textoBin, 6);
+        $sequenciasDe6 = str_split($textoBin, 6);
+
+        foreach($sequenciasDe6 as $key => $sequencia){
+            $sequenciasDe6[$key] = str_pad($sequencia, 6, 0);
+        }
+
+        return $sequenciasDe6;
     }
 
     private function binToDec($sequenciasDe6){
@@ -64,28 +70,29 @@ dd($textoASCII, $textoHex, $textoBin, $texto6by6, $textoDec, $textoCriptografado
         return $arrayDeDec;
     }
 
-    private function decToASCII($arrayDeDec, $arrayDeBin){
+    private function decToBase64Alphabet($arrayDeDec){
         foreach($arrayDeDec as $key => $itemDec){
-            $arrayDeASCII[$key] = chr(intval(7));
+            $arrayDeBASE64[$key] = BASE64::TABLE[$itemDec];
+
         }
-        for($i = 0; $i <= 150; $i++){
-            print_r(chr($i));
-        }die;
         $padding = "=";
-        $textBin = "";
-        foreach($arrayDeBin as $bin){
-            $textBin .= $bin;
+        $text64 = "";
+        foreach($arrayDeBASE64 as $caractere64){
+            $text64 .= $caractere64;
         }
 
-        switch(strlen($textBin) % 3){
+        switch(strlen($text64) % 4){
             case 1:
-                array_push($arrayDeASCII, $padding . $padding );
+                $text64 .= $padding . $padding . $padding;
                 break;
             case 2:
-                array_push($arrayDeASCII, $padding);
+                $text64 .= $padding . $padding;
+                break;
+            case 3:
+                $text64 .= $padding;
                 break;
         }
-        return $arrayDeASCII;
+        return $text64;
     }
 
 }

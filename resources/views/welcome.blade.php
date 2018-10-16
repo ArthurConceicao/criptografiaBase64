@@ -76,7 +76,7 @@
 
         <div>
             <form action="{{ route('criptografar.base64') }}" method="post">
-                <textarea name="texto_original"></textarea>
+                <input type="text" name="texto_original" required />
                 <input type="submit" value="Criptografar">
                 {{ csrf_field() }}
             </form>
