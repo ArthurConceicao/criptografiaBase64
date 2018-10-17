@@ -87,7 +87,9 @@
 </head>
 <body>
 <div class="flex-center position-ref full-height">
-
+    <div class="top-right links">
+        <a href="{{ url('/') }}">Limpar</a>
+    </div>
     <div class="content">
         <div class="title m-b-md">
             Criptografia Base64
@@ -104,15 +106,16 @@
                 <input class="btn" type="submit" value="DESCRIPTOGRAFAR">
                 {{ csrf_field() }}
             </form>
+
         </div>
         <div>
             @if($textoCriptografado)
-                <h2>{{ $textoCriptografado }}</h2>
-{{--                <h2>{{ base64_decode($textoCriptografado) }}</h2>--}}
+{{--                <h2>{{ $textoCriptografado }}</h2>--}}
+                <h2>{{ base64_decode($textoCriptografado) }}</h2>
             @endif
             @if($textoDescriptografado)
-                <h2>{{ $textoDescriptografado }}</h2>
-{{--                <h2>{{ base64_encode($textoDescriptografado) }}</h2>--}}
+{{--                <h2>{{ $textoDescriptografado }}</h2>--}}
+                <h2>{{ base64_encode($textoDescriptografado) }}</h2>
             @endif
         </div>
     </div>

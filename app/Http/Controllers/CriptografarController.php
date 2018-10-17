@@ -16,10 +16,13 @@ class CriptografarController extends Controller
     public function index(){
         $textoCriptografado = '';
         $textoDescriptografado = '';
+
         return view('/welcome', compact('textoCriptografado', 'textoDescriptografado'));
     }
 
     public function criptografar(Request $request){
+
+
         $texto = $request['texto_original'];
         $textoCriptografado = '';
         $textoDescriptografado = $request['texto_original'];
@@ -28,7 +31,7 @@ class CriptografarController extends Controller
         $texto6by6 = $this->break6by6($textoBin);
         $textoDec = $this->binToDec($texto6by6);
         $textoCriptografado = $this->decToBase64Alphabet($textoDec);
-//dd($texto, $textoHex, $textoBin, $texto6by6, $textoDec, $textoCriptografado);
+dd($texto, $textoHex, $textoBin, $texto6by6, $textoDec, $textoCriptografado);
         return view('/welcome', compact('textoCriptografado', 'textoDescriptografado'));
     }
 

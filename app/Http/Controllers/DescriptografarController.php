@@ -13,8 +13,7 @@ class DescriptografarController extends Controller
         $textoDescriptografado = '';
         $textoDec64 = $this->base64AlphabetToDec($texto);
         $textoBin = $this->decToBin($textoDec64);
-        $texto6by6 = $this->break6by6($textoBin);
-        $texto8by8 = $this->break8by8($texto6by6);
+        $texto8by8 = $this->break8by8($textoBin);
         $textoDec = $this->binToDec($texto8by8);
         $textoDescriptografado = $this->decToAscii($textoDec);
 //        dd($texto, $textoDec64, $textoBin, $texto6by6,$texto8by8, $textoDec, $textoDescriptografado);
@@ -28,7 +27,6 @@ class DescriptografarController extends Controller
             if($caractere64 === "="){
                 continue;
             }else{
-
                 $arrayDeDec[$key] = $tabelaBASE64[$caractere64];
             }
         }
@@ -42,20 +40,9 @@ class DescriptografarController extends Controller
         return $arrayDeBin;
     }
 
-    private function break6by6($arrayDeBin){
-        $textoBin = '';
-        foreach($arrayDeBin as $caractere){
-            $textoBin .= $caractere;
-        }
-
-        $sequenciasDe6 = str_split($textoBin, 6);
-
-        return $sequenciasDe6;
-    }
-
     private function break8by8($sequenciasDe6){
         $textoBin = '';
-        foreach($sequenciasDe6 as $sequencia){ //TODO: QUEBRAR DE 8 EM 8
+        foreach($sequenciasDe6 as $sequencia){
             $textoBin .= $sequencia;
         }
 
