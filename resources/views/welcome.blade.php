@@ -25,7 +25,7 @@
         }
 
         .flex-center {
-            align-items: center;
+            /*align-items: center;*/
             display: flex;
             justify-content: center;
         }
@@ -61,37 +61,58 @@
         .m-b-md {
             margin-bottom: 30px;
         }
+        .input-text{
+            width: 70%;
+            border-radius: 5px 5px 5px 5px ;
+            height: 20px;
+        }
+        .btn{
+            width: 20%;
+            height: 26px;
+            background: dodgerblue;
+            color: honeydew;
+            border-color: honeydew;
+            border-radius: 5px 5px 5px 5px ;
+        }
+        .btn:hover, .btn:focus {
+            background: darkblue;
+            color: honeydew;
+            border-color: darkblue;
+            cursor: pointer;
+        }
+        form{
+            margin-bottom: 5px;
+        }
     </style>
 </head>
 <body>
 <div class="flex-center position-ref full-height">
-    <div class="top-right links">
-        <a href="{{ url('/home') }}">Home</a>
-    </div>
 
     <div class="content">
         <div class="title m-b-md">
-            Criptografia
+            Criptografia Base64
         </div>
 
-        <div>
+        <div class="form">
             <form action="{{ route('criptografar') }}" method="post">
-                <input type="text" name="texto_original" required/>
-                <input type="submit" value="Criptografar">
+                <input class="input-text" type="text" name="texto_original"  value="{{ $textoDescriptografado }}" required/>
+                <input class="btn" type="submit" value="CRIPTOGRAFAR">
                 {{ csrf_field() }}
             </form>
-            <form action="{{ route('descriptografar') }}" method="post">
-                <input type="text" name="texto_criptografado" required/>
-                <input type="submit" value="Descriptografar">
+            <form  action="{{ route('descriptografar') }}" method="post">
+                <input class="input-text" type="text" name="texto_criptografado" value="{{ $textoCriptografado }}"required/>
+                <input class="btn" type="submit" value="DESCRIPTOGRAFAR">
                 {{ csrf_field() }}
             </form>
         </div>
         <div>
             @if($textoCriptografado)
-                <h4>{{ $textoCriptografado }}</h4>
+                <h2>{{ $textoCriptografado }}</h2>
+{{--                <h2>{{ base64_decode($textoCriptografado) }}</h2>--}}
             @endif
-            @if($textoDesriptografado)
-                <h4>{{ $textoDesriptografado }}</h4>
+            @if($textoDescriptografado)
+                <h2>{{ $textoDescriptografado }}</h2>
+{{--                <h2>{{ base64_encode($textoDescriptografado) }}</h2>--}}
             @endif
         </div>
     </div>

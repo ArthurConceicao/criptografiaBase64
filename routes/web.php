@@ -11,7 +11,7 @@
 |
 */
 
-Route::get('/', 'Criptografar@index');
+Route::get('/', 'CriptografarController@index');
 
 Route::post('/criptografar', 'CriptografarController@criptografar')->name('criptografar');
 Route::post('/descriptografar', 'DescriptografarController@descriptografar')->name('descriptografar');
