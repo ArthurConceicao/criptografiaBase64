@@ -9,15 +9,16 @@
 namespace App\Http\Controllers;
 
 use App\Constants\BASE64;
+use Illuminate\Http\Request;
 
-class Base64Controller extends Controller
+class Criptografar extends Controller
 {
     public function index(){
         $textoCriptografado = '';
         return view('/welcome', compact('textoCriptografado'));
     }
 
-    public function criptografar(\Illuminate\Http\Request $request){
+    public function criptografar(Request $request){
         $texto = $request['texto_original'];
 
         $textoHex = $this->asciiToHex($texto);
@@ -25,7 +26,7 @@ class Base64Controller extends Controller
         $texto6by6 = $this->break6by6($textoBin);
         $textoDec = $this->binToDec($texto6by6);
         $textoCriptografado = $this->decToBase64Alphabet($textoDec);
-dd($texto, $textoHex, $textoBin, $texto6by6, $textoDec, $textoCriptografado);
+//dd($texto, $textoHex, $textoBin, $texto6by6, $textoDec, $textoCriptografado);
         return view('/welcome', compact('textoCriptografado'));
     }
 
@@ -43,7 +44,6 @@ dd($texto, $textoHex, $textoBin, $texto6by6, $textoDec, $textoCriptografado);
         foreach($arrayDeHex as $key => $itemHex) {
             $arrayDeBin[$key] = sprintf("%08d", base_convert($itemHex, 16, 2));
         }
-
         return $arrayDeBin;
     }
 

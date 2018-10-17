@@ -75,15 +75,23 @@
         </div>
 
         <div>
-            <form action="{{ route('criptografar.base64') }}" method="post">
-                <input type="text" name="texto_original" required />
+            <form action="{{ route('criptografar') }}" method="post">
+                <input type="text" name="texto_original" required/>
                 <input type="submit" value="Criptografar">
+                {{ csrf_field() }}
+            </form>
+            <form action="{{ route('descriptografar') }}" method="post">
+                <input type="text" name="texto_criptografado" required/>
+                <input type="submit" value="Descriptografar">
                 {{ csrf_field() }}
             </form>
         </div>
         <div>
             @if($textoCriptografado)
                 <h4>{{ $textoCriptografado }}</h4>
+            @endif
+            @if($textoDesriptografado)
+                <h4>{{ $textoDesriptografado }}</h4>
             @endif
         </div>
     </div>

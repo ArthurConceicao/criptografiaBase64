@@ -11,6 +11,10 @@
 |
 */
 
-Route::get('/', 'Base64Controller@index');
+Route::get('/', 'Criptografar@index');
 
-Route::post('/base64', 'Base64Controller@criptografar')->name('criptografar.base64');
+Route::post('/criptografar', 'CriptografarController@criptografar')->name('criptografar');
+Route::post('/descriptografar', 'DescriptografarController@descriptografar')->name('descriptografar');
+
+Route::get('/criptografar/{texto}', 'CriptografarController@criptografar');
+Route::get('/descriptografar/{texto}', 'DescriptografarController@descriptografar');
